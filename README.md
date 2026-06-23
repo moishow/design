@@ -247,23 +247,23 @@ mini **6** / sm **8** / md **12**(입력·버튼) / lg **16** / xl **20**(카드
 
 ## 10. 파일 목록
 
-```
-design_handoff_moisho/
-├── README.md                  ← 이 문서
-├── CLAUDE.md                  ← Claude Code 프로젝트 규칙
-├── openapi.yaml               ← API 계약 (OpenAPI 3.1)
-├── docs/                      ← 설계 문서 4종 (HTML)
-│   ├── 01_PRD.html
-│   ├── 02_데이터정의서.html
-│   ├── 03_API_권한설계서.html
-│   └── 04_API_상세명세서.html
-└── design/
-    ├── design-tokens.md       ← 토큰 요약(이 README 6절과 동일)
-    ├── tokens/                ← 원본 토큰 CSS (colors/typography/spacing/fonts/base)
-    ├── prototype-app.html     ← 모바일 앱 풀 프로토타입 (로그인+5탭, 자체완결 단일 파일)
-    ├── prototype-admin.html   ← 운영 어드민 풀 프로토타입 (자체완결 단일 파일)
-    └── spec/                  ← 화면 정의서 / 와이어프레임
-```
+> 🔗 각 파일은 배포된 [GitHub Pages](https://moishow.github.io/design/)에서 바로 열립니다.
+
+- **README.md** ← 이 문서
+- [**CLAUDE.md**](https://moishow.github.io/design/CLAUDE.md) ← Claude Code 프로젝트 규칙
+- [**openapi.yaml**](https://moishow.github.io/design/openapi.yaml) ← API 계약 (OpenAPI 3.1)
+- **docs/** ← 설계 문서 5종 (HTML)
+  - [01_PRD.html](https://moishow.github.io/design/docs/01_PRD.html)
+  - [02_데이터정의서.html](https://moishow.github.io/design/docs/02_%EB%8D%B0%EC%9D%B4%ED%84%B0%EC%A0%95%EC%9D%98%EC%84%9C.html)
+  - [03_API_권한설계서.html](https://moishow.github.io/design/docs/03_API_%EA%B6%8C%ED%95%9C%EC%84%A4%EA%B3%84%EC%84%9C.html)
+  - [04_API_상세명세서.html](https://moishow.github.io/design/docs/04_API_%EC%83%81%EC%84%B8%EB%AA%85%EC%84%B8%EC%84%9C.html)
+  - [05_포인트에스크로정산모델.html](https://moishow.github.io/design/docs/05_%ED%8F%AC%EC%9D%B8%ED%8A%B8%EC%97%90%EC%8A%A4%ED%81%AC%EB%A1%9C%EC%A0%95%EC%82%B0%EB%AA%A8%EB%8D%B8.html) ⭐ 머니플로우 정본
+- **design/**
+  - [design-tokens.md](https://moishow.github.io/design/design/design-tokens.md) ← 토큰 요약(이 README 6절과 동일)
+  - **tokens/** ← 원본 토큰 CSS ([base](https://moishow.github.io/design/design/tokens/base.css) · [colors](https://moishow.github.io/design/design/tokens/colors.css) · [typography](https://moishow.github.io/design/design/tokens/typography.css) · [spacing](https://moishow.github.io/design/design/tokens/spacing.css) · [fonts](https://moishow.github.io/design/design/tokens/fonts.css))
+  - [prototype-app.html](https://moishow.github.io/design/design/prototype-app.html) ← 모바일 앱 풀 프로토타입 (로그인+5탭, 자체완결 단일 파일)
+  - [prototype-admin.html](https://moishow.github.io/design/design/prototype-admin.html) ← 운영 어드민 풀 프로토타입 (자체완결 단일 파일)
+  - **spec/** ← 화면 정의서 / 와이어프레임 ([Moisho Spec.html](https://moishow.github.io/design/design/spec/Moisho%20Spec.html))
 
 ---
 
