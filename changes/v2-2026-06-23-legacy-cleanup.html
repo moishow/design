@@ -128,6 +128,23 @@ footer a{color:var(--blue-600);font-weight:600}
     </article>
   </section>
 
+  <section class="filesec">
+    <h2>어드민 재무 <code>openapi · docs/02 · docs/03</code></h2>
+    <p class="fdesc">구 운영자-대사/지급승인 엔드포인트를 제거가 아니라 에스크로에 맞게 재정의(B 후속).</p>
+    <article class="chg">
+      <div class="chg-head"><span class="badge b-c1">재정의</span><span class="fid">admin-finance</span><h3>/admin/deposits·/admin/payouts → 충전 대사 / 현금화·환급 분쟁</h3></div>
+      <p class="why">에스크로에선 충전=webhook 자동, 출금=총무 자율이라 "입금 대사·지급 승인"은 부적합. 운영자의 실제 금융 역할(충전 누락 보정 + cashout 실패/환급 이의 처리)로 재정의하고 openapi·docs/02 G도메인·docs/03 §12를 일치. 엔티티명 충돌(에스크로 Deposit/Payout)도 해소.</p>
+      <div class="diff row">
+        <div class="d d-before"><span class="lbl">— before</span>/admin/deposits = 입금 대사 큐
+/admin/payouts/{id}/decision = 지급 승인/반려 → 카카오 실행 (decision: approve/reject)
+엔티티: Deposit/Reconcile · Payout(지급 승인)</div>
+        <div class="d d-after"><span class="lbl">+ after</span>/admin/deposits = 카카오 충전 대사 큐
+/admin/payouts/{id}/decision = 현금화 재처리/보류/반려 (decision: retry/hold/reject) · 총무 출금은 자율(승인 없음)
+엔티티: ChargeReconcile · CashoutDispute</div>
+      </div>
+    </article>
+  </section>
+
 </main>
 <footer><div class="wrap">
   모이쇼 핸드오프 변경이력 v2 · 2026-06-23 · <a href="index.html">전체 버전 보기</a> · <a href="v1-2026-06-23-escrow-consistency.html">← v1</a> · <a href="../index.html">핸드오프 홈</a>

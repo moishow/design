@@ -450,13 +450,13 @@ paths:
 
   # ============ §12 어드민 — 재무·CS·정책 ============
   /admin/deposits:
-    get: { tags: [Admin-Finance], summary: 입금 대사 큐 (op.finance), responses: { "200": { description: OK } } }
+    get: { tags: [Admin-Finance], summary: 카카오페이 충전 대사 큐 — 충전 webhook 누락/불일치 점검 (op.finance), responses: { "200": { description: OK } } }
   /admin/deposits/{id}/confirm:
-    post: { tags: [Admin-Finance], summary: 수동 입금 확인 → 장부 반영 (op.finance), parameters: [ { $ref: "#/components/parameters/id" } ], responses: { "200": { description: OK } } }
+    post: { tags: [Admin-Finance], summary: 충전 누락 수동 확인 → 지갑 포인트 보정 (op.finance), parameters: [ { $ref: "#/components/parameters/id" } ], responses: { "200": { description: OK } } }
   /admin/payouts:
-    get: { tags: [Admin-Finance], summary: 지급(환불) 승인 큐 (op.finance), responses: { "200": { description: OK } } }
+    get: { tags: [Admin-Finance], summary: 현금화·환급 분쟁 큐 — cashout 실패·정산 환급 이의 (op.finance), responses: { "200": { description: OK } } }
   /admin/payouts/{id}/decision:
-    post: { tags: [Admin-Finance], summary: 지급 승인/반려 → 카카오페이 실행 (op.finance), parameters: [ { $ref: "#/components/parameters/id" } ], requestBody: { content: { application/json: { schema: { type: object, properties: { decision: { type: string, enum: [approve, reject] }, reason: { type: string } } } } } }, responses: { "200": { description: OK } } }
+    post: { tags: [Admin-Finance], summary: 현금화 재처리/보류 결정 — 총무 출금(payout)은 자율이며 운영자 승인 단계 없음 (op.finance), parameters: [ { $ref: "#/components/parameters/id" } ], requestBody: { content: { application/json: { schema: { type: object, properties: { decision: { type: string, enum: [retry, hold, reject] }, reason: { type: string } } } } } }, responses: { "200": { description: OK } } }
   /admin/ledger:
     get: { tags: [Admin-Finance], summary: 전체 거래 원장·CSV (op.finance), responses: { "200": { description: OK } } }
   /admin/reports/export:
