@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>모이쇼 — 디자인시스템 v2 구축</title>
+    <meta name="description" content="모이쇼 디자인시스템 v2 — 토큰·컴포넌트·기준화면·에이전트 규칙 구축 요약" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <style>
+      @font-face {
+        font-family: "Pretendard Variable";
+        font-weight: 45 920;
+        font-style: normal;
+        font-display: swap;
+        src: url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/woff2/PretendardVariable.woff2") format("woff2-variations");
+      }
+      :root {
+        --blue-50: #eef2ff;
+        --blue-100: #dfe6ff;
+        --blue-500: #3b5cff;
+        --blue-600: #2e47e6;
+        --blue-700: #2438b8;
+        --coral-50: #fff0ee;
+        --coral-500: #ff6b5c;
+        --coral-700: #e0513f;
+        --mint-50: #e5fbf3;
+        --mint-700: #008857;
+        --amber-50: #fff6e5;
+        --amber-600: #f08f00;
+        --ink: #161a24;
+        --text-title: #272d3b;
+        --text-body: #3c4456;
+        --text-muted: #6e7689;
+        --text-faint: #9aa3b5;
+        --card: #ffffff;
+        --sunken: #f4f6fa;
+        --border-subtle: #ebeef4;
+        --border: #dde2ec;
+        --r-md: 12px;
+        --r-lg: 16px;
+        --r-xl: 20px;
+        --r-pill: 999px;
+        --shadow-card: 0 4px 20px rgba(59, 92, 255, 0.06);
+        --shadow-pop: 0 16px 40px rgba(30, 46, 143, 0.16);
+        --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Pretendard Variable",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Apple SD Gothic Neo",
+          system-ui,
+          sans-serif;
+        color: var(--text-body);
+        background: var(--sunken);
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+        font-feature-settings: "tnum" 1;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .wrap {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* hero — 신뢰 블루 + 코랄 온기 한 줄(색 권한을 dogfood) */
+      .hero {
+        position: relative;
+        overflow: hidden;
+        color: #fff;
+        padding: 56px 0 60px;
+        background: radial-gradient(820px 340px at 10% -10%, rgba(59, 92, 255, 0.55), transparent 60%), linear-gradient(135deg, var(--blue-700), var(--blue-500));
+      }
+      .crumb {
+        font-size: 13px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.82);
+        margin-bottom: 16px;
+      }
+      .crumb a {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+      }
+      .ver-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+      .ver {
+        font-size: 13px;
+        font-weight: 800;
+        color: #fff;
+        background: var(--coral-500);
+        padding: 3px 11px;
+        border-radius: var(--r-pill);
+        letter-spacing: 0.03em;
+      }
+      .date {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.78);
+      }
+      .hero h1 {
+        font-size: clamp(28px, 5vw, 42px);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        margin-bottom: 12px;
+      }
+      .hero p {
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.9);
+        max-width: 600px;
+      }
+      .hero .accent {
+        color: #ffc9c2;
+      }
+
+      main {
+        padding: 46px 0 30px;
+      }
+      .sec {
+        margin-bottom: 40px;
+      }
+      .sec > h2 {
+        font-size: 21px;
+        font-weight: 800;
+        color: var(--ink);
+        letter-spacing: -0.01em;
+        margin-bottom: 6px;
+      }
+      .sec > .lead {
+        font-size: 14px;
+        color: var(--text-muted);
+        margin-bottom: 18px;
+      }
+
+      /* concept callout */
+      .concept {
+        background: var(--card);
+        border: 1px solid var(--border-subtle);
+        border-left: 4px solid var(--coral-500);
+        border-radius: var(--r-lg);
+        padding: 18px 20px;
+        box-shadow: var(--shadow-card);
+      }
+      .concept b {
+        color: var(--ink);
+      }
+
+      /* file groups */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 14px;
+      }
+      .grp {
+        background: var(--card);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--r-xl);
+        padding: 18px 20px;
+        box-shadow: var(--shadow-card);
+      }
+      .grp h3 {
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--blue-600);
+        margin-bottom: 12px;
+      }
+      .grp ul {
+        list-style: none;
+      }
+      .grp li {
+        display: flex;
+        gap: 9px;
+        padding: 6px 0;
+        font-size: 13.5px;
+        border-bottom: 1px solid var(--border-subtle);
+      }
+      .grp li:last-child {
+        border-bottom: none;
+      }
+      .grp code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12.5px;
+        color: var(--ink);
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .grp .d {
+        color: var(--text-muted);
+        font-size: 12.5px;
+      }
+
+      /* page list */
+      .pages {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 12px;
+      }
+      .page {
+        display: block;
+        background: var(--card);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--r-lg);
+        padding: 14px 16px;
+        box-shadow: var(--shadow-card);
+        transition:
+          transform 0.2s var(--ease-spring),
+          box-shadow 0.2s var(--ease-out),
+          border-color 0.2s;
+      }
+      .page:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-pop);
+        border-color: var(--blue-100);
+      }
+      .page .pt {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+      }
+      .page .pt code {
+        font-family: ui-monospace, Menlo, monospace;
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+      .tag {
+        font-size: 10px;
+        font-weight: 800;
+        padding: 2px 7px;
+        border-radius: var(--r-pill);
+        letter-spacing: 0.02em;
+      }
+      .tag.money {
+        background: var(--blue-50);
+        color: var(--blue-700);
+      }
+      .tag.comm {
+        background: var(--coral-50);
+        color: var(--coral-700);
+      }
+      .page .pd {
+        font-size: 12.5px;
+        color: var(--text-muted);
+      }
+
+      /* steps */
+      .steps {
+        counter-reset: s;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .step {
+        position: relative;
+        background: var(--card);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--r-lg);
+        padding: 16px 18px 16px 56px;
+        box-shadow: var(--shadow-card);
+      }
+      .step::before {
+        counter-increment: s;
+        content: counter(s);
+        position: absolute;
+        left: 16px;
+        top: 15px;
+        width: 28px;
+        height: 28px;
+        background: var(--blue-500);
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 14px;
+        box-shadow: 0 4px 12px rgba(59, 92, 255, 0.3);
+      }
+      .step h4 {
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--ink);
+        margin-bottom: 4px;
+      }
+      .step p {
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+      .step code {
+        font-family: ui-monospace, Menlo, monospace;
+        font-size: 12px;
+        color: var(--coral-700);
+        background: var(--coral-50);
+        padding: 1px 6px;
+        border-radius: 5px;
+        font-weight: 600;
+      }
+
+      /* rules */
+      .rules {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+      }
+      .rule {
+        background: var(--card);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--r-lg);
+        padding: 14px 16px;
+      }
+      .rule b {
+        display: block;
+        color: var(--ink);
+        font-size: 13.5px;
+        margin-bottom: 3px;
+      }
+      .rule span {
+        font-size: 12.5px;
+        color: var(--text-muted);
+      }
+
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 28px 0 50px;
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+      footer a {
+        color: var(--blue-600);
+        font-weight: 600;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="wrap">
+        <div class="crumb">
+          <a href="../index.html">모이쇼 핸드오프</a>
+          ·
+          <a href="index.html">변경이력</a>
+          · 디자인시스템
+        </div>
+        <div class="ver-row">
+          <span class="ver">v3</span>
+          <span class="date">2026-06-30</span>
+        </div>
+        <h1>디자인시스템 v2 구축</h1>
+        <p>
+          <b class="accent">"신뢰는 구조로, 친근함은 표면으로"</b>
+          — 같은 팔레트에 화면별 색 사용권을 두는 규칙 위에, 토큰·컴포넌트·기준화면·에이전트 규칙을 한 벌로 만들었습니다.
+        </p>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <!-- 컨셉 -->
+      <div class="sec">
+        <div class="concept">
+          퍼플(
+          <code>#8C52FF</code>
+          ) 액센트를 폐기하고
+          <b>
+            코랄
+            <code>#FF6B5C</code>
+          </b>
+          (모임 온기)와
+          <b>
+            크림슨
+            <code>#F0384B</code>
+          </b>
+          (위험)을 분리했습니다. 핵심은
+          <b>색 출입 권한 규칙</b>
+          :
+          <b>money 화면</b>
+          (정산·금액)은 블루·잉크·민트만,
+          <b>community 화면</b>
+          (모임·온보딩)은 코랄 액센트 허용. 기준화면은
+          <code>meeting-detail.html</code>
+          입니다.
+        </div>
+      </div>
+
+      <!-- 무엇을 만들었나 -->
+      <div class="sec">
+        <h2>무엇을 만들었나</h2>
+        <p class="lead">
+          모든 산출물은
+          <code>design/system/</code>
+          에 있습니다.
+        </p>
+        <div class="grid">
+          <div class="grp">
+            <h3>토큰 · 규칙</h3>
+            <ul>
+              <li>
+                <code>tokens.css</code>
+                <span class="d">색·타이포·간격·라운드·그림자·모션 단일 출처</span>
+              </li>
+              <li>
+                <code>components.css</code>
+                <span class="d">모든 화면이 공유하는 컴포넌트 클래스</span>
+              </li>
+              <li>
+                <code>AGENTS.md</code>
+                <span class="d">클로드코드용 사용 규칙(체크리스트)</span>
+              </li>
+              <li>
+                <code>DESIGN.md</code>
+                <span class="d">사람용 정본 문서</span>
+              </li>
+            </ul>
+          </div>
+          <div class="grp">
+            <h3>에셋 · 코드</h3>
+            <ul>
+              <li>
+                <code>icons.svg</code>
+                <span class="d">lucide 스타일 아이콘 25종(이모지 대체)</span>
+              </li>
+              <li>
+                <code>mascots.svg</code>
+                <span class="d">젤리 마스코트 벡터(정식)</span>
+              </li>
+              <li>
+                <code>assets/mascots/</code>
+                <span class="d">마스코트 원본 추출 PNG</span>
+              </li>
+              <li>
+                <code>flutter/*.dart</code>
+                <span class="d">ThemeData 매핑 + 위젯 카탈로그</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 새로 만든 페이지 -->
+      <div class="sec">
+        <h2>새로 만든 페이지</h2>
+        <p class="lead">
+          기준화면 1 + 아키타입 5 + 스캐폴드/갤러리 2.
+          <span class="tag money">money</span>
+          = 정산·금액 톤,
+          <span class="tag comm">community</span>
+          = 모임 톤.
+        </p>
+        <div class="pages">
+          <a class="page" href="../design/system/meeting-detail.html">
+            <div class="pt">
+              <code>meeting-detail.html</code>
+              <span class="tag money">money</span>
+            </div>
+            <div class="pd">디자인 기준화면 — 에스크로 스테퍼·블루 슬랩·체크리스트</div>
+          </a>
+          <a class="page" href="../design/system/onboarding.html">
+            <div class="pt">
+              <code>onboarding.html</code>
+              <span class="tag comm">community</span>
+            </div>
+            <div class="pd">마스코트 히어로 + 코어 가치 2축 + SNS 로그인</div>
+          </a>
+          <a class="page" href="../design/system/home.html">
+            <div class="pt">
+              <code>home.html</code>
+              <span class="tag money">money</span>
+            </div>
+            <div class="pd">내 모임 리스트 + 잔액 슬랩 + 탭바</div>
+          </a>
+          <a class="page" href="../design/system/create-meeting.html">
+            <div class="pt">
+              <code>create-meeting.html</code>
+              <span class="tag comm">community</span>
+            </div>
+            <div class="pd">폼 — 입력·금액·셀렉트·토글·체크박스</div>
+          </a>
+          <a class="page" href="../design/system/empty-state.html">
+            <div class="pt">
+              <code>empty-state.html</code>
+              <span class="tag comm">community</span>
+            </div>
+            <div class="pd">빈 상태(마스코트 등장 허용 모먼트)</div>
+          </a>
+          <a class="page" href="../design/system/settlement-complete.html">
+            <div class="pt">
+              <code>settlement-complete.html</code>
+              <span class="tag money">money</span>
+            </div>
+            <div class="pd">정산 완료 축하 — 민트 + 마스코트(유일 예외)</div>
+          </a>
+          <a class="page" href="../design/system/template.html">
+            <div class="pt"><code>template.html</code></div>
+            <div class="pd">새 페이지 복사 시작점(스캐폴드)</div>
+          </a>
+          <a class="page" href="../design/system/components.html">
+            <div class="pt"><code>components.html</code></div>
+            <div class="pd">컴포넌트 갤러리 — 전 상태 + 색 권한 데모</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- 클로드코드 활용법 -->
+      <div class="sec">
+        <h2>클로드코드 개발 시 활용법</h2>
+        <p class="lead">
+          새 화면을 만들 때 이 순서를 따르면 meeting-detail과 자동으로 일관됩니다.
+          <br />
+          <b>AGENTS.md를 참조하게 하면 아래 내용이 적용됩니다</b>
+        </p>
+        <div class="steps">
+          <div class="step">
+            <h4>
+              <code>template.html</code>
+              복사로 시작
+            </h4>
+            <p>
+              폰 프레임·헤더·CSS 링크가 들어간 빈 골격에서 출발.
+              <code>tokens.css</code>
+              +
+              <code>components.css</code>
+              를 항상 둘 다 링크.
+            </p>
+          </div>
+          <div class="step">
+            <h4>화면 종류를 선언</h4>
+            <p>
+              루트
+              <code>.screen</code>
+              에
+              <code>surface-money</code>
+              (정산·금액) 또는
+              <code>surface-community</code>
+              (모임)를 건다 → 색 권한이 자동 적용.
+            </p>
+          </div>
+          <div class="step">
+            <h4>컴포넌트는 클래스 조합</h4>
+            <p>
+              CSS를 새로 짜지 말고
+              <code>.btn</code>
+              <code>.card</code>
+              <code>.badge</code>
+              <code>.stepper</code>
+              <code>.slab</code>
+              <code>.field</code>
+              등을 쓴다. 예시는
+              <code>components.html</code>
+              참조.
+            </p>
+          </div>
+          <div class="step">
+            <h4>토큰만 사용 · 이모지 금지</h4>
+            <p>
+              색·간격은
+              <code>var(--…)</code>
+              만(새 hex 발명 금지). 금액엔
+              <code>class="num"</code>
+              . 글리프는
+              <code>icons.svg</code>
+              .
+            </p>
+          </div>
+          <div class="step">
+            <h4>
+              <code>AGENTS.md</code>
+              체크리스트로 마감
+            </h4>
+            <p>완료 전 6단계 체크(CSS 링크·surface·블루 CTA·num·이모지 0·토큰만)를 통과시킨다.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 절대 규칙 -->
+      <div class="sec">
+        <h2>절대 규칙 4가지</h2>
+        <div class="rules">
+          <div class="rule">
+            <b>색 출입 권한</b>
+            <span>money 화면에 코랄·크림슨 금지. 돈 CTA는 항상 블루.</span>
+          </div>
+          <div class="rule">
+            <b>토큰만</b>
+            <span>새 색·간격·라운드 발명 금지. tokens.css 변수만.</span>
+          </div>
+          <div class="rule">
+            <b>이모지 금지</b>
+            <span>모든 글리프는 icons.svg 인라인 SVG.</span>
+          </div>
+          <div class="rule">
+            <b>마스코트는 모먼트만</b>
+            <span>온보딩·빈상태·완료 축하에만. 정산 화면 금지.</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        모이쇼 디자인시스템 v2 ·
+        <a href="../design/system/DESIGN.md">DESIGN.md</a>
+        ·
+        <a href="../design/system/AGENTS.md">AGENTS.md</a>
+        ·
+        <a href="index.html">변경이력 홈</a>
+      </div>
+    </footer>
+  </body>
+</html>
