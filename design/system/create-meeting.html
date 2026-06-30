@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모이쇼 — 모임 만들기 (폼 아키타입)</title>
+<!-- 폼: input/amount/select/toggle/checkbox 모음. 모임 생성은 community 톤이되,
+     금액 입력은 잉크/블루로(돈은 따뜻한 색 안 씀). -->
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="components.css">
+<style>
+  body { background: #FAF9F5; display: flex; justify-content: center; padding: 24px 0; }
+  .form { padding-top: 8px; }
+  .agree { display: flex; align-items: center; justify-content: space-between; margin: 16px 20px 0; }
+  .agree__label { font-size: var(--fs-body); color: var(--text-body); }
+</style>
+</head>
+<body>
+
+<div class="phone"><div class="screen surface-community">
+
+  <header class="appbar">
+    <svg class="icon"><path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+    <div class="appbar__title">모임 만들기</div>
+    <span style="width:24px"></span>
+  </header>
+
+  <div class="headline">
+    <h1>새 모임<br><span class="light">정보를 입력해요</span></h1>
+  </div>
+
+  <div class="form">
+    <label class="field">
+      <span class="field__label">모임 이름</span>
+      <input class="field__input" placeholder="예: 디자인동아리 봄 시즌 킥오프">
+    </label>
+
+    <label class="field">
+      <span class="field__label">카테고리</span>
+      <span class="select">
+        <input class="field__input" placeholder="카테고리 선택" readonly value="동아리·소모임">
+      </span>
+    </label>
+
+    <label class="field field--amount">
+      <span class="field__label">1인당 회비</span>
+      <input class="field__input num" inputmode="numeric" value="50,000">
+    </label>
+
+    <label class="field">
+      <span class="field__label">만남 일시</span>
+      <span class="select">
+        <input class="field__input" readonly value="6/30 (월) 19:00">
+      </span>
+    </label>
+
+    <div class="agree">
+      <span class="agree__label">만남 시각에 자동으로 잠금(락)</span>
+      <label class="toggle"><input type="checkbox" checked><span class="toggle__track"></span></label>
+    </div>
+
+    <div class="agree" style="margin-top:18px">
+      <label class="checkbox">
+        <input type="checkbox" checked>
+        <span class="checkbox__box"><svg class="icon"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
+        에스크로 정산 약관에 동의합니다
+      </label>
+    </div>
+  </div>
+
+  <div class="cta-bar">
+    <button class="btn btn--warm btn--block">모임 만들기</button>
+  </div>
+
+</div></div>
+
+</body>
+</html>
